@@ -67,12 +67,14 @@ because that boolean can be derived instantenously from the birth_date field.
 Let's create our first drape to do that:
 
     >>> import datetime as dt
-    >>> import drapes
-    
-    >>> class IDChecker(drapes.Drape):
+    >>> from drapes import Drape
+
+    >>> class IDCheckerMixin(object):
     ...     def is_of_drinking_age(self):
     ...         return (dt.datetime.combine(self.birth_date, dt.time())
     ...                 < (dt.datetime.now() - dt.timedelta(days=365 * 21)))
+
+    >>> IDChecker = Drape.make(IDCheckerMixin)
 
 And try again, but this time, we'll manually drape our IDChecker Drape over the
 user record that is returned from the database:
