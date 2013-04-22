@@ -65,12 +65,12 @@ because that boolean can be derived instantenously from the birth_date field.
 
 Let's create our first drape to do that:
 
-    >>> from datetime import datetime as dt
+    >>> import datetime as dt
     >>> import drapes
     
     >>> class User(drapes.Drape):
     ...     def is_of_drinking_age(self):
-    ...         return dt.combine(self.birth_date, dt.time()) < (dt.now() - dt.timedelta(years=21))
+    ...         return dt.datetime.combine(self.birth_date, dt.time()) < (dt.datetime.now() - dt.timedelta(days=365 * 21))
 
 And try again, but this time, we'll manually drape our User Drape over the user
 record that is returned from the database:
