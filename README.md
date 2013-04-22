@@ -10,7 +10,8 @@ there are some reoccuring patterns that are tedious to manage without something
 like an ORM, hence... drapes.
 
 The name comes from the fact the the objects that are created by the ORM behave
-as if they are "draped over" the raw records that come back from the database.
+as if they are "draped over" the raw records that come back from the database,
+or they can be thought of a way to "drape methods" over the raw data.
 
 In fact, at any given moment, they may or may not be implemented as some sort
 of proxy object (as I write this, they are not, they pull the elements out
@@ -118,5 +119,8 @@ But there's an even easier way to stack drapes:
     True
     >>> user.authenticates("password")
     True
+
+If multiple drapes in the stack define the same functions the outermost
+drape will take priority.
 
 This whole README should pass doctest if you create an appropriate database.
