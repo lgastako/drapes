@@ -26,7 +26,7 @@ class Draper(object):
     def first(self, *args, **kwargs):
         x = self._db.first(*args, **kwargs)
         if x:
-            return self.wrap(x)
+            return self._wrap(x)
 
     def count(self, *args, **kwargs):
         return self._db.count(*args, **kwargs)
