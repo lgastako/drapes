@@ -7,28 +7,29 @@ class Drape(object):
 
     def __init__(self, row):
         self._row = row
+        self._fields = row._fields
+        for field in row._fields:
+            print "absorbing field: ", field
+            setattr(self, field, getattr(row, field))
 
 
 class Draper(object):
 
-    def __init__(self, db=None, *mixins):
+    def __init__(self, name, db=None, *mixins):
+        import ipdb; ipdb.set_trace()
         self._mixins = mixins
-        self.db = db or db_
-
-    def _wrap(self, row):
-        # TODO: Create class return it here etc
-        return row
 
     def item(self, *args, **kwargs):
-        return self._wrap(self.db.item(*args, **kwargs))
+        row = self.db.item(*args, **kwargs)
+        return self._drape(row)
 
     def items(self, *args, **kwargs):
-        return map(self._wrap, self.db.items(*args, **kwargs))
+        return map(self._drape, self.db.items(*args, **kwargs))
 
     def first(self, *args, **kwargs):
         x = self.db.first(*args, **kwargs)
         if x:
-            return self._wrap(x)
+            return self._drape(x)
 
     def count(self, *args, **kwargs):
         return self.db.count(*args, **kwargs)
@@ -48,4 +49,6 @@ class Draper(object):
 
 
 def drape(name, db=None, *mixins):
-    return Draper(*mixins)
+    # bind to db
+    bases = (Drape,) + mixins
+    return type(name, bases, {})
