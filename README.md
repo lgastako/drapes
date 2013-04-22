@@ -68,14 +68,15 @@ Let's create our first drape to do that:
     >>> import datetime as dt
     >>> import drapes
     
-    >>> class User(drapes.Drape):
+    >>> class IDChecker(drapes.Drape):
     ...     def is_of_drinking_age(self):
-    ...         return dt.datetime.combine(self.birth_date, dt.time()) < (dt.datetime.now() - dt.timedelta(days=365 * 21))
+    ...         return (dt.datetime.combine(self.birth_date, dt.time())
+    ...                 < (dt.datetime.now() - dt.timedelta(days=365 * 21)))
 
-And try again, but this time, we'll manually drape our User Drape over the user
-record that is returned from the database:
+And try again, but this time, we'll manually drape our IDChecker Drape over the
+user record that is returned from the database:
 
-    >>> user = User(db.item("SELECT * FROM demo_users"))
+    >>> user = IDChecker(db.item("SELECT * FROM demo_users"))
 
 And now when we try our 'is_of_drinking_age' method, of course it works:
 
@@ -85,7 +86,7 @@ And now when we try our 'is_of_drinking_age' method, of course it works:
 In addition we could've used the shortcut that all of the db.* functions
 are available on any Drape to short the above load call to:
 
-    >>> user = User.item("SELECT * FROM demo_users")
+    >>> user = IDChecker.item("SELECT * FROM demo_users")
 
 Drapes are stackable, so if we have another Drape, like so:
 
@@ -95,7 +96,7 @@ Drapes are stackable, so if we have another Drape, like so:
 
 Then we can get a user that has both helper functions:
 
-    >>> user = User(PWChecker(db.item("SELECT * FROM demo_users")))
+    >>> user = IDChecker(PWChecker(db.item("SELECT * FROM demo_users")))
     >>> user.is_of_drinking_age()
     True
     >>> user.authenticates("password")
@@ -103,11 +104,19 @@ Then we can get a user that has both helper functions:
 
 And it works in either order:
 
-    >>> user = PWChecker(User(db.item("SELECT * FROM demo_users")))
+    >>> user = PWChecker(IDChecker(db.item("SELECT * FROM demo_users")))
     >>> user.is_of_drinking_age()
     True
     >>> user.authenticates("password")
     True
 
+But there's an even easier way to stack drapes:
+
+    >>> User = PWChecker.compose(IDChecker)
+    >>> user = User.item("SELECT * FROM demo_users")
+    >>> user.is_of_drinking_age()
+    True
+    >>> user.authenticates("password")
+    True
 
 This whole README should pass doctest if you create an appropriate database.
