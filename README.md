@@ -98,7 +98,16 @@ Then we can get a user that has both helper functions:
     >>> user = User(PWChecker(db.item("SELECT * FROM demo_users")))
     >>> user.is_of_drinking_age()
     True
-    >>> user.authenticates("foo")
+    >>> user.authenticates("password")
+    True
+
+And it works in either order:
+
+    >>> user = PWChecker(User(db.item("SELECT * FROM demo_users")))
+    >>> user.is_of_drinking_age()
+    True
+    >>> user.authenticates("password")
     True
 
 
+This whole README should pass doctest if you create an appropriate database.
